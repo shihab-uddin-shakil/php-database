@@ -1,14 +1,4 @@
-
 <?php 
-if(isset($_COOKIE['user']) && isset($_COOKIE['password'])){
-    $user=$_COOKIE['user'];
-    $password=$_COOKIE['password'];
-    
-    echo "<script>
-    document.getElementById(userNamee).value='$user';
-    document.getElementById(passworde).value='$password';
-    </script>";
-}
     
     $passworde=$userNamee="";
     $passwordErre=$userNameErre="";
@@ -32,58 +22,48 @@ if(isset($_COOKIE['user']) && isset($_COOKIE['password'])){
                 $passworde=$_POST['passworde'];
             }
             if($passwordErre == "" && $userNameErre == ""){
-                //admin user
-                $file2 = fopen("information.txt", "r");
-                $read = fread($file2, filesize("information.txt"));
-                fclose($file2);
-                $json_decoded_text = json_decode($read, true);
-                // doctor user
-                $file3 = fopen("doctor.txt", "r");
-                $read2 = fread($file3, filesize("doctor.txt"));
-                fclose($file3);
-                $json_decoded_text2 = json_decode($read2, true);
                 
-                if($userNamee==$json_decoded_text['userId'] && $passworde==$json_decoded_text['password']){
-                      setcookie('user',$json_decoded_text['userId'],time()+60);
-                      setcookie('password',$json_decoded_text['password'],time()+60);
-                     header("location:http://localhost/Admin.php");
-                     die();
-                     // include ('Admin.php');
-    //                  echo "<script>
-    // window.location.replace('Admin.php');
-    
-    // </script>";
-                      session_start();
-                      $_SESSION["userid"] =$userNamee;
-                      $_SESSION["pass"] = $passworde;
-                }
-                elseif($userNamee==$json_decoded_text2['userId'] && $passworde==$json_decoded_text2['password']){
-                    setcookie('user',$json_decoded_text2['userId'],time()+60);
-                    setcookie('password',$json_decoded_text2['password'],time()+60);
-                   // header("location: DoctorDashboard.php");
-                   // include ('Admin.php');
-                    session_start();
-                    $_SESSION["userid"] =$userNamee;
-                    $_SESSION["pass"] = $passworde;
-              }
-                else{
-                 $Erre="Unable login ..UserName Or Passwor Invalid please Try again..!!";
-                }        
+                $host = "localhost";
+	$user = "user";
+	$pass = "123";
+	$db = "task";
+
+	// Mysqli object-oriented
+	$conn1 = new mysqli($host, $user, $pass, $db);
+
+	if($conn1->connect_error) {
+		echo "Database Connection Failed!";
+		echo "<br>";
+		echo $conn1->connect_error;
+	}
+    else {
+		
+		$sql = "select * from user";
+		$res1 = $conn1->query($sql);
+		if($res1->num_rows > 0) {
+			while($row = $res1->fetch_assoc()) {
+				if($userNamee== $row['username'] && $passworde==$row['password']){
+            
+                    header("location:http://localhost/successful.html");
+                    die();
+                 
+               }
+              
+               else{
+                $Erre="Unable login ..UserName Or Passwor Invalid please Try again..!!";
+               }      
+			}
+		}
+                  
                 
             }
             
         
-           else{
-            $Erre="Unable login";
-           }
       }
 
     }
-    else{
-       // header("location: Login.php");
-    }
-   
-//
+}
+    
 
 
     
